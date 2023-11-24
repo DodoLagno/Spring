@@ -1,16 +1,21 @@
 package fr.diginamic.springdemo;
 
+// Ville.java
 public class Ville {
 
     private String nom;
     private String pays;
+
+    public Ville() {
+        // Constructeur par défaut requis par Spring pour la désérialisation JSON
+    }
 
     public Ville(String nom, String pays) {
         this.nom = nom;
         this.pays = pays;
     }
 
-    // Ajoutez les getters et setters nécessaires
+    // Getters et setters
 
     public String getNom() {
         return nom;
@@ -28,4 +33,3 @@ public class Ville {
         this.pays = pays;
     }
 }
-

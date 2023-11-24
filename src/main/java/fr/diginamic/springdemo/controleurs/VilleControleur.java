@@ -1,25 +1,51 @@
 package fr.diginamic.springdemo.controleurs;
 
+// VilleControleur.java
 import fr.diginamic.springdemo.Ville;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.Arrays;
+import fr.diginamic.springdemo.service.VilleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/villes")
 public class VilleControleur {
 
-    // Autres méthodes peuvent être ajoutées ici
+    private final VilleService villeService;
+
+    @Autowired
+    public VilleControleur(VilleService villeService) {
+        this.villeService = villeService;
+    }
 
     @GetMapping
     public List<Ville> getListeVilles() {
-        return Arrays.asList(
-                new Ville("Paris", "France"),
-                new Ville("New York", "États-Unis"),
-                new Ville("Tokyo", "Japon")
-                // Ajoutez d'autres villes si nécessaire
-        );
+        return villeService.getListeVilles();
+    }
+
+    @PostMapping
+    public ResponseEntity<String> ajouterVilles(@RequestBody List<Ville> nouvellesVilles) {
+        for (Ville nouvelleVille : nouvellesVilles) {
+            if (villeService.villeExisteDeja(nouvelleVille.getNom())) {
+                return new ResponseEntity<>("La ville existe déjà", HttpStatus.BAD_REQUEST);
+            }
+            villeService.ajouterVille(nouvelleVille);
+        }
+
+        return new ResponseEntity<>("Villes insérées avec succès", HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<String> ajouterVille(@RequestBody Ville nouvelleVille) {
+        if (villeService.villeExisteDeja(nouvelleVille.getNom())) {
+            return new ResponseEntity<>("La ville existe déjà", HttpStatus.BAD_REQUEST);
+        }
+
+        villeService.ajouterVille(nouvelleVille);
+        return new ResponseEntity<>("Ville insérée avec succès", HttpStatus.OK);
     }
 }
+
