@@ -1,13 +1,23 @@
 package fr.diginamic.springdemo;
 
-// Ville.java
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Ville {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SuppressWarnings("unused")
+    private Long id;
 
     private String nom;
     private String pays;
 
+    // Constructeur sans paramètre requis par JPA
     public Ville() {
-        // Constructeur par défaut requis par Spring pour la désérialisation JSON
     }
 
     public Ville(String nom, String pays) {
@@ -15,7 +25,9 @@ public class Ville {
         this.pays = pays;
     }
 
-    // Getters et setters
+    public Long getId() {
+        return id;
+    }
 
     public String getNom() {
         return nom;
@@ -32,4 +44,16 @@ public class Ville {
     public void setPays(String pays) {
         this.pays = pays;
     }
+
+    // Override toString() pour une meilleure représentation lors du débogage
+    @Override
+    public String toString() {
+        return "Ville{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", pays='" + pays + '\'' +
+                '}';
+    }
+
+    // Vous pouvez ajouter d'autres méthodes ou annotations au besoin
 }

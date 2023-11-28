@@ -1,51 +1,67 @@
 package fr.diginamic.springdemo.controleurs;
 
-// VilleControleur.java
 import fr.diginamic.springdemo.Ville;
-import fr.diginamic.springdemo.service.VilleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/villes")
 public class VilleControleur {
 
-    private final VilleService villeService;
-
-    @Autowired
-    public VilleControleur(VilleService villeService) {
-        this.villeService = villeService;
-    }
+    private final List<Ville> villes = new ArrayList<>();
 
     @GetMapping
-    public List<Ville> getListeVilles() {
-        return villeService.getListeVilles();
+    public List<Ville> getVilles() {
+        return villes;
+    }
+
+    @GetMapping("/{id}")
+    public Ville getVilleById(@PathVariable int id) {
+        return villes.stream()
+                .filter(ville -> ville.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     @PostMapping
-    public ResponseEntity<String> ajouterVilles(@RequestBody List<Ville> nouvellesVilles) {
-        for (Ville nouvelleVille : nouvellesVilles) {
-            if (villeService.villeExisteDeja(nouvelleVille.getNom())) {
-                return new ResponseEntity<>("La ville existe déjà", HttpStatus.BAD_REQUEST);
-            }
-            villeService.ajouterVille(nouvelleVille);
+    public void createVille(@RequestBody Ville nouvelleVille) {
+        if (villes.stream().noneMatch(ville -> ville.getId() == nouvelleVille.getId())) {
+            villes.add(nouvelleVille);
+        } else {
+            // Gérer le cas où une ville avec le même identifiant existe déjà
+            // Vous pourriez lever une exception, renvoyer un code d'erreur, etc.
         }
-
-        return new ResponseEntity<>("Villes insérées avec succès", HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<String> ajouterVille(@RequestBody Ville nouvelleVille) {
-        if (villeService.villeExisteDeja(nouvelleVille.getNom())) {
-            return new ResponseEntity<>("La ville existe déjà", HttpStatus.BAD_REQUEST);
-        }
+    @PutMapping("/{id}")
+    public Ville updateVille(@PathVariable int id, @RequestBody Ville villeModifiee) {
+        Optional<Ville> villeExistante = villes.stream()
+                .filter(ville -> ville.getId() == id)
+                .findFirst();
 
-        villeService.ajouterVille(nouvelleVille);
-        return new ResponseEntity<>("Ville insérée avec succès", HttpStatus.OK);
+        if (villeExistante.isPresent()) {
+            Ville ville = villeExistante.get();
+            updateVilleAttributes(ville, villeModifiee);
+            return ville;
+        } else {
+            // Gérer le cas où aucune ville avec l'identifiant fourni n'est trouvée
+            // Vous pourriez lever une exception, renvoyer un code d'erreur, etc.
+            return null;
+        }
+    }
+
+    private void updateVilleAttributes(Ville ville, Ville villeModifiee) {
+        ville.setNom(villeModifiee.getNom());
+        ville.setPays(villeModifiee.getPays());
+        // Mettez à jour d'autres attributs si nécessaire
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteVille(@PathVariable int id) {
+        villes.removeIf(ville -> ville.getId() == id);
+        // Vous pourriez également renvoyer une réponse indiquant le succès ou l'échec de l'opération
     }
 }
-
