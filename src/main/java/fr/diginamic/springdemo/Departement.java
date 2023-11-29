@@ -5,36 +5,45 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import java.util.List;
+
+import java.util.Set;
 
 @Entity
 public class Departement {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nom;
     private int code;
 
-@OneToMany(mappedBy = "departement")
-    private List<Ville> villes;
-
+    @OneToMany(mappedBy="departement")
+    private Set<Ville> villes;
     public Departement() {
     }
 
-    public Object getNom() {
-        return null;
+    public int getId() {
+        return id;
     }
 
-    public Object getCode() {
-        return null;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setCode(Object code) {
+    public String getNom() {
+        return nom;
     }
 
-    public void setNom(Object nom) {
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
-    // Getters et setters
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+
 }

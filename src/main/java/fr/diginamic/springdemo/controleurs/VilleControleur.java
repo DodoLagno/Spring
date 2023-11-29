@@ -1,13 +1,13 @@
 package fr.diginamic.springdemo.controleurs;
 
 import fr.diginamic.springdemo.Ville;
-import fr.diginamic.springdemo.repository.VilleRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import fr.diginamic.springdemo.repositories.VilleRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/villes")
@@ -19,53 +19,41 @@ public class VilleControleur {
         this.villeRepository = villeRepository;
     }
 
-    @GetMapping
-    public List<Ville> getVilles() {
-        return villeRepository.findAll();
-    }
+    // Autres méthodes existantes...
 
-    @GetMapping("/{id}")
-    public Ville getVilleById(@PathVariable Long id) {
-        return villeRepository.findById(id).orElse(null);
-    }
-
-    @PostMapping
-    public ResponseEntity<String> createVille(@RequestBody Ville nouvelleVille) {
-        if (villeRepository.existsById(nouvelleVille.getId())) {
-            return new ResponseEntity<>("Une ville avec le même identifiant existe déjà.", HttpStatus.CONFLICT);
-        } else {
-            villeRepository.save(nouvelleVille);
-            return new ResponseEntity<>("Ville créée avec succès.", HttpStatus.CREATED);
+    @GetMapping("/search/byName/{name}")
+    public List<Ville> getVillesByName(@PathVariable String name) {
+        List<Ville> villes = villeRepository.findByNomStartingWith(name);
+        if (villes.isEmpty()) {
+            throw new VilleNotFoundException("Aucune ville dont le nom commence par " + name + " n'a été trouvée");
         }
+        return villes;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateVille(@PathVariable Long id, @RequestBody Ville villeModifiee) {
-        if (!id.equals(villeModifiee.getId())) {
-            return new ResponseEntity<>("L'ID de la ville dans le chemin d'accès ne correspond pas à l'ID de la ville dans le corps de la requête.", HttpStatus.BAD_REQUEST);
+    @GetMapping("/search/byPopulationGreaterThan/{min}")
+    public List<Ville> getVillesByPopulationGreaterThan(@PathVariable int min) {
+        List<Ville> villes = villeRepository.findByPopulationGreaterThan(min);
+        if (villes.isEmpty()) {
+            throw new VilleNotFoundException("Aucune ville n'a une population supérieure à " + min);
         }
+        return villes;
+    }
 
-        Optional<Ville> villeExistante = villeRepository.findById(id);
-
-        if (villeExistante.isPresent()) {
-            Ville ville = villeExistante.get();
-            updateVilleAttributes(ville, villeModifiee);
-            villeRepository.save(ville);
-            return new ResponseEntity<>("Ville mise à jour avec succès.", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Aucune ville avec l'identifiant fourni n'a été trouvée.", HttpStatus.NOT_FOUND);
+    @GetMapping("/search/byPopulationBetween/{min}/{max}")
+    public List<Ville> getVillesByPopulationBetween(@PathVariable int min, @PathVariable int max) {
+        List<Ville> villes = villeRepository.findByPopulationBetween(min, max);
+        if (villes.isEmpty()) {
+            throw new VilleNotFoundException("Aucune ville n'a une population comprise entre " + min + " et " + max);
         }
+        return villes;
     }
 
-    private void updateVilleAttributes(Ville ville, Ville villeModifiee) {
-        ville.setNom(villeModifiee.getNom());
-        ville.setId(villeModifiee.getPays());
-        // Mettez à jour d'autres attributs si nécessaire
-    }
+    // Ajoutez d'autres méthodes de recherche en fonction des besoins
 
-    @DeleteMapping("/{id}")
-    public void deleteVille(@PathVariable Long id) {
-        villeRepository.deleteById(id);
-        // Vous pourriez également renvoyer une réponse indiquant le succès ou l'échec de l'opération
+    // Exception personnalisée pour gérer les cas où aucune ville n'est trouvée
+    public static class VilleNotFoundException extends RuntimeException {
+        public VilleNotFoundException(String message) {
+            super(message);
+        }
     }
 }

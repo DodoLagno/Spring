@@ -1,7 +1,7 @@
 package fr.diginamic.springdemo.controleurs;
 
 import fr.diginamic.springdemo.Departement;
-import fr.diginamic.springdemo.service.DepartementService;
+import fr.diginamic.springdemo.services.DepartementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

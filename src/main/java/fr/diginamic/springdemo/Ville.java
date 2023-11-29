@@ -47,6 +47,14 @@ public class Ville {
         this.pays = pays;
     }
 
+    public int getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(int population) {
+        this.population = population;
+    }
+
     public Departement getDepartement() {
         return departement;
     }
@@ -62,11 +70,13 @@ public class Ville {
                 "id=" + id +
                 ", nom='" + nom + '\'' +
                 ", pays='" + pays + '\'' +
+                ", population=" + population +
                 ", departement=" + departement +
                 '}';
     }
 
-    public void setId(String pays) {
+    public void setId(Long id) {
+        this.id = id;
     }
 
     // Vous pouvez ajouter d'autres méthodes ou annotations au besoin

@@ -1,4 +1,4 @@
-package fr.diginamic.springdemo.service;
+package fr.diginamic.springdemo.services;
 
 
 import fr.diginamic.springdemo.Departement;

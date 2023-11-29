@@ -1,4 +1,4 @@
-package fr.diginamic.springdemo.repository;
+package fr.diginamic.springdemo.repositories;
 
 import fr.diginamic.springdemo.Departement;
 import fr.diginamic.springdemo.Ville;
