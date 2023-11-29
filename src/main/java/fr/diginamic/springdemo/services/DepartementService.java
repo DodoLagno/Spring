@@ -1,68 +1,64 @@
 package fr.diginamic.springdemo.services;
 
-
 import fr.diginamic.springdemo.Departement;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class DepartementService {
+
     @PersistenceContext
     private EntityManager em;
 
-    public List<Departement> extractDepartements() {
-        // extrait et retourne les Departements qui sont en base.
+    public ResponseEntity<List<Departement>> extractDepartements() {
         TypedQuery<Departement> query = em.createQuery("SELECT d FROM Departement d", Departement.class);
-        return query.getResultList();
+        return ResponseEntity.ok(query.getResultList());
     }
 
-    public Departement extractDepartement(int idDepartement) {
-        // extrait le Departement dont l’id est passé en paramètre.
-        return em.find(Departement.class, idDepartement);
+    public ResponseEntity<Departement> extractDepartement(int idDepartement) {
+        Departement departement = em.find(Departement.class, idDepartement);
+        return ResponseEntity.ok(departement);
     }
 
-    public Departement extractDepartement(String nom) {
-        // extrait le Departement dont le nom est passé en paramètre
+    public ResponseEntity<Departement> extractDepartement(String nom) {
         TypedQuery<Departement> query = em.createQuery("SELECT d FROM Departement d WHERE d.nom = :nom", Departement.class);
         query.setParameter("nom", nom);
-        return query.getSingleResult();
+        Departement departement = query.getSingleResult();
+        return ResponseEntity.ok(departement);
     }
 
     @Transactional
-    public List<Departement> insertDepartement(Departement nvDepartement) {
-        // insère un nouveau Departement en base et retourne la liste des Departements après insertion
+    public ResponseEntity<String> insertDepartement(Departement nvDepartement) {
         em.persist(nvDepartement);
-        return extractDepartements();
+        return ResponseEntity.ok("Département inséré avec succès");
     }
 
     @Transactional
-    public List<Departement> modifierDepartement(int idDepartement, Departement DepartementModifiee) {
-        // modifie le Departement dont l’identifiant est passé en paramètre.
-        // Les nouvelles données sont portées par l’instance DepartementModifiee.
-        // La méthode retourne la liste des Departements après modification
-        Departement DepartementFromDB = em.find(Departement.class, idDepartement);
-        if (DepartementFromDB != null) {
-            DepartementFromDB.setNom(DepartementModifiee.getNom());
-            DepartementFromDB.setCode(DepartementModifiee.getCode());
+    public ResponseEntity<String> modifierDepartement(int idDepartement, Departement departementModifiee) {
+        Departement departementFromDB = em.find(Departement.class, idDepartement);
+        if (departementFromDB != null) {
+            departementFromDB.setNom(departementModifiee.getNom());
+            departementFromDB.setCode(departementModifiee.getCode());
+            return ResponseEntity.ok("Département modifié avec succès");
+        } else {
+            return ResponseEntity.badRequest().body("Département non trouvé");
         }
-        return extractDepartements();
     }
 
     @Transactional
-    public List<Departement> supprimerDepartement(int idDepartement) {
-        // supprime le Departement dont ‘id est passé en paramètre
-        // et retourne la liste des Departements après suppression.
-        Departement DepartementFromDB = em.find(Departement.class, idDepartement);
-        if (DepartementFromDB != null) {
-            em.remove(DepartementFromDB);
+    public ResponseEntity<String> supprimerDepartement(int idDepartement) {
+        Departement departementFromDB = em.find(Departement.class, idDepartement);
+        if (departementFromDB != null) {
+            em.remove(departementFromDB);
+            return ResponseEntity.ok("Département supprimé avec succès");
+        } else {
+            return ResponseEntity.badRequest().body("Département non trouvé");
         }
-        return extractDepartements();
     }
-
 }
-
