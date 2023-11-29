@@ -4,17 +4,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 public class Ville {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SuppressWarnings("unused")
     private Long id;
 
     private String nom;
     private String pays;
+
+    @ManyToOne
+    @JoinColumn(name = "departement_id") // Assurez-vous que le nom de la colonne est correct
+    private Departement departement;
 
     // Constructeur sans paramètre requis par JPA
     public Ville() {
@@ -45,6 +50,14 @@ public class Ville {
         this.pays = pays;
     }
 
+    public Departement getDepartement() {
+        return departement;
+    }
+
+    public void setDepartement(Departement departement) {
+        this.departement = departement;
+    }
+
     // Override toString() pour une meilleure représentation lors du débogage
     @Override
     public String toString() {
@@ -52,6 +65,7 @@ public class Ville {
                 "id=" + id +
                 ", nom='" + nom + '\'' +
                 ", pays='" + pays + '\'' +
+                ", departement=" + departement +
                 '}';
     }
 

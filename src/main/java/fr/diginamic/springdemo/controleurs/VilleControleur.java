@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -28,9 +29,10 @@ public class VilleControleur {
 
     @PostMapping
     public void createVille(@RequestBody Ville nouvelleVille) {
-        if (villes.stream().noneMatch(ville -> ville.getId() == nouvelleVille.getId())) {
+        if (villes.stream().noneMatch(ville -> Objects.equals(ville.getId(), nouvelleVille.getId()))) {
             villes.add(nouvelleVille);
         } else {
+            throw new IllegalArgumentException("Une ville avec le même identifiant existe déjà.");
             // Gérer le cas où une ville avec le même identifiant existe déjà
             // Vous pourriez lever une exception, renvoyer un code d'erreur, etc.
         }
@@ -47,8 +49,8 @@ public class VilleControleur {
             updateVilleAttributes(ville, villeModifiee);
             return ville;
         } else {
-            // Gérer le cas où aucune ville avec l'identifiant fourni n'est trouvée
-            // Vous pourriez lever une exception, renvoyer un code d'erreur, etc.
+            // gérer le cas où aucune ville avec l'identifiant fourni n'est trouvée
+            // vous pourriez lever une exception, renvoyer un code d'erreur, etc.
             return null;
         }
     }
