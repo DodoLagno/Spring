@@ -1,11 +1,6 @@
 package fr.diginamic.springdemo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 
 @Entity
 public class Ville {
@@ -17,8 +12,10 @@ public class Ville {
     private String nom;
     private String pays;
 
+    private int population;
+
     @ManyToOne
-    @JoinColumn(name = "departement_id") // Assurez-vous que le nom de la colonne est correct
+    @JoinColumn(name = "departement_id")
     private Departement departement;
 
     // Constructeur sans paramètre requis par JPA
@@ -67,6 +64,9 @@ public class Ville {
                 ", pays='" + pays + '\'' +
                 ", departement=" + departement +
                 '}';
+    }
+
+    public void setId(String pays) {
     }
 
     // Vous pouvez ajouter d'autres méthodes ou annotations au besoin

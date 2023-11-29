@@ -41,7 +41,7 @@ public class VilleService {
     // Modifier une ville dans la liste
     public List<Ville> modifierVille(int idVille, Ville villeModifiee) {
         Optional<Ville> villeExistante = listeVilles.stream()
-                .filter(ville -> ville.getId() == idVille)
+                .filter(ville -> ville.getId().equals(idVille))
                 .findFirst();
 
         if (villeExistante.isPresent()) {
@@ -56,7 +56,7 @@ public class VilleService {
 
     // Supprimer une ville de la liste
     public List<Ville> supprimerVille(int idVille) {
-        listeVilles.removeIf(ville -> ville.getId() == idVille);
+        listeVilles.removeIf(ville -> ville.getId().equals(idVille));
         return getListeVilles();
     }
 }

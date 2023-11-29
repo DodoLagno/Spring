@@ -16,7 +16,7 @@ public class Departement {
     private String nom;
     private int code;
 
-    @OneToMany(mappedBy = "departement")
+@OneToMany(mappedBy = "departement")
     private List<Ville> villes;
 
     public Departement() {
